@@ -444,7 +444,7 @@ class ArgspecLiteral(Expression):
             self.slurp = None
 
     def iter_list_argspec(self):
-        yield None, ListLiteral(zip(*self.argpairs)[1])
+        yield None, ListLiteral(list(zip(*self.argpairs))[1])
 
     def iter_def_argspec(self):
         """Interpreting this literal as a function definition, yields pairs of

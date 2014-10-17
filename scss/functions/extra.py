@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 import base64
-import hashlib
 import logging
 import os.path
 import random
@@ -14,7 +13,7 @@ from six.moves import xrange
 from scss import config
 from scss.functions.library import FunctionLibrary
 from scss.types import Color, Number, String, List
-from scss.util import escape
+from scss.util import escape, make_cache_key, make_data_url
 
 try:
     from PIL import Image, ImageDraw
@@ -298,7 +297,7 @@ def background_noise(density=None, opacity=None, size=None, monochrome=False, in
         key = (size, density, intensity, color, opacity, monochrome)
         asset_file = 'noise-%s%sx%s' % ('mono-' if monochrome else '', size, size)
         # asset_file += '-[%s][%s]' % ('-'.join(to_str(s).replace('.', '_') for s in density or []), '-'.join(to_str(s).replace('.', '_') for s in opacity or []))
-        asset_file += '-' + base64.urlsafe_b64encode(hashlib.md5(repr(key)).digest()).rstrip('=').replace('-', '_')
+        asset_file += '-' + make_cache_key(key)
         asset_file += '.png'
         asset_path = os.path.join(config.ASSETS_ROOT or os.path.join(config.STATIC_ROOT, 'assets'), asset_file)
         try:
@@ -360,7 +359,7 @@ def background_brushed(density=None, intensity=None, color=None, opacity=None, s
         key = (size, density, intensity, color, opacity, monochrome, direction, spread, background)
         asset_file = 'brushed-%s%sx%s' % ('mono-' if monochrome else '', size, size)
         # asset_file += '-[%s][%s][%s]' % ('-'.join(to_str(s).replace('.', '_') for s in density or []), '-'.join(to_str(s).replace('.', '_') for s in opacity or []), '-'.join(to_str(s).replace('.', '_') for s in direction or []))
-        asset_file += '-' + base64.urlsafe_b64encode(hashlib.md5(repr(key)).digest()).rstrip('=').replace('-', '_')
+        asset_file += '-' + make_cache_key(key)
         asset_file += '.png'
         asset_path = os.path.join(config.ASSETS_ROOT or os.path.join(config.STATIC_ROOT, 'assets'), asset_file)
         try:
@@ -427,7 +426,7 @@ def _grid_image(left_gutter, width, right_gutter, height, columns=1, grid_color=
         if height and height > 1:
             grid_name += 'x' + str(int(height))
         key = (columns, grid_color, baseline_color, background_color)
-        key = grid_name + '-' + base64.urlsafe_b64encode(hashlib.md5(repr(key)).digest()).rstrip('=').replace('-', '_')
+        key = grid_name + '-' + make_cache_key(key)
         asset_file = key + '.png'
         asset_path = os.path.join(config.ASSETS_ROOT or os.path.join(config.STATIC_ROOT, 'assets'), asset_file)
         try:
@@ -466,6 +465,6 @@ def image_color(color, width=1, height=1):
     contents = output.getvalue()
     output.close()
     mime_type = 'image/png'
-    url = 'data:' + mime_type + ';base64,' + base64.b64encode(contents)
+    url = make_data_url(mime_type, contents)
     inline = 'url("%s")' % escape(url)
     return String.unquoted(inline)

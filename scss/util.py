@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import base64
+import hashlib
 import re
 import sys
 import time
@@ -89,6 +91,15 @@ def normalize_var(var):
     dashes.
     """
     return var.replace('_', '-')
+
+
+def make_cache_key(key):
+    return base64.urlsafe_b64encode(hashlib.md5(repr(key).encode('utf-8')).digest())\
+        .decode('utf-8').rstrip('=').replace('-', '_')
+
+
+def make_data_url(mime_type, contents):
+    return 'data:' + mime_type + ';base64,' + base64.b64encode(contents).decode('ascii')
 
 
 ################################################################################

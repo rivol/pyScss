@@ -340,7 +340,7 @@ def radial_svg_gradient(*args):
         center = args[-1]
         color_stops = args[:-1]
     color_stops = __color_stops(False, *color_stops)
-    cx, cy = zip(*grad_point(center).items())[1]
+    cx, cy = list(zip(*grad_point(center).items()))[1]
     r = __grad_end_position(True, color_stops)
     svg = __radial_svg(color_stops, cx, cy, r)
     url = 'data:' + 'image/svg+xml' + ';base64,' + base64.b64encode(svg)
@@ -357,8 +357,8 @@ def linear_svg_gradient(*args):
         start = args[-1]
         color_stops = args[:-1]
     color_stops = __color_stops(False, *color_stops)
-    x1, y1 = zip(*grad_point(start).items())[1]
-    x2, y2 = zip(*grad_point(opposite_position(start)).items())[1]
+    x1, y1 = list(zip(*grad_point(start).items()))[1]
+    x2, y2 = list(zip(*grad_point(opposite_position(start)).items()))[1]
     svg = _linear_svg(color_stops, x1, y1, x2, y2)
     url = 'data:' + 'image/svg+xml' + ';base64,' + base64.b64encode(svg)
     inline = 'url("%s")' % escape(url)
