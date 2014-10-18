@@ -137,6 +137,8 @@ class SourceFile(object):
         self.sass = filename.endswith('.sass') if is_sass is None else is_sass
         self.line_numbers = line_numbers
         self.line_strip = line_strip
+        if isinstance(contents, six.binary_type):
+            contents = contents.decode('utf-8')
         self.contents = self.prepare_source(contents)
         self.parent_dir = os.path.realpath(parent_dir)
         self.is_string = is_string
