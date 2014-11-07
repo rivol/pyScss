@@ -6,7 +6,7 @@ from subprocess import PIPE, Popen
 
 def test_stdio():
     proc = Popen(['python', '-m', 'scss.tool', '-C'], stdin=PIPE, stdout=PIPE)
-    out, _ = proc.communicate("""
+    out, _ = proc.communicate(b"""
         $color: red;
 
         table {
@@ -16,7 +16,7 @@ def test_stdio():
         }
     """)
 
-    assert out == """\
+    assert out == b"""\
 table td {
   color: red;
 }
